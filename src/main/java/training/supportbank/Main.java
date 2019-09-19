@@ -34,6 +34,10 @@ public class Main {
                 this.from = f;
                 this.amount = a;
             }
+
+            void removeAllMoney() {
+                amount = new BigDecimal(0);
+            }
         }
 
 
@@ -44,7 +48,7 @@ public class Main {
 
         List<Person> csvPeopleList = new ArrayList<>();
 
-        List<Person> peopleList = new ArrayList<>();
+        ArrayList<Person> peopleList = new ArrayList<Person>();
 
         List<Transaction> transactionList = new ArrayList<>();
 
@@ -92,6 +96,8 @@ public class Main {
             }
         }
 
+        //peopleList = removeDuplicates();
+
         //-----------------------------------------------------------------
 
         for (int i = 0; i < peopleList.size(); i++) {
@@ -125,4 +131,26 @@ public class Main {
 
 */
     }
+    /*
+    List<Tra> removeDuplicates(popList, newList) {
+        ArrayList<Person> people = new ArrayList<Person>();
+
+        for (int i = 0; i < csvPeopleList.size(); i++) {
+
+            boolean Duplicates = false;
+
+            for (int x = i + 1; x < csvPeopleList.size(); x++) {
+
+                if (csvPeopleList.get(x).name.equals(csvPeopleList.get(i).name)) {
+                    Duplicates = true;
+                }
+            }
+
+            if (!Duplicates) {
+                peopleList.add(new Person(csvPeopleList.get(i).name));
+            }
+        }
+
+        return people;
+    }*/
 }
