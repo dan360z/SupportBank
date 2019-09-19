@@ -42,11 +42,12 @@ public class Main {
         List<String> file = Files.readAllLines(Paths.get("Transactions2014.csv"), Charset.forName("windows-1252"));
 
 
-        List<String> dates = new ArrayList<>();
-        List<String> namesFrom = new ArrayList<>();
-        List<String> namesTo = new ArrayList<>();
-        List<String> description = new ArrayList<>();
-        List<String> amount = new ArrayList<>();
+        List<Person> csvPeopleList = new ArrayList<>();
+
+        List<Person> peopleList = new ArrayList<>();
+
+        List<Transaction> transactionList = new ArrayList<>();
+
 
         int count = 0;
 
@@ -56,15 +57,16 @@ public class Main {
 
                 String[] lineItems = line.split(",");
 
-                dates.add(lineItems[0]);
-                namesFrom.add(lineItems[1]);
-                namesTo.add(lineItems[2]);
-                description.add(lineItems[3]);
-                amount.add(lineItems[4]);
+                //--People-----------------------------------
+                csvPeopleList.add(new Person(lineItems[2]));
 
-                Person p = new Person(lineItems[1]);
+                //--Transactions--------------------------------
+                String desc = lineItems[3];
+                Person to = new Person(lineItems[2]);
+                Person from  = new Person(lineItems[1]);
+                BigDecimal amount = new BigDecimal(lineItems[4]);
 
-                System.out.println(p.name);
+                transactionList.add(new Transaction(desc, to, from, amount));
 
             }
 
@@ -72,23 +74,33 @@ public class Main {
 
         }
 
+        //--Builds People List------------------------------------------------------
 
-    /*
-        System.out.println("\n" + "📆 Dates list: " + dates + "\n");
-        System.out.println("👩 ‍From list: " + namesFrom + "\n");
-        System.out.println("👨 ‍To list: " + namesTo + "\n");
-        System.out.println("📝 Narrative list: " + description + "\n");
-        System.out.println("💵 Amount list: " + amount + "\n");
-    /*
+        for (int i = 0; i < csvPeopleList.size(); i++) {
 
-/*
-        for (int i = 0; i < namesFrom.size(); i++) {
+            boolean Duplicates = false;
 
-            System.out.println(namesFrom.get(i));
+            for (int x = i + 1; x < csvPeopleList.size(); x++) {
 
+                if (csvPeopleList.get(x).name.equals(csvPeopleList.get(i).name)) {
+                    Duplicates = true;
+                }
+            }
+
+            if (!Duplicates) {
+                peopleList.add(new Person(csvPeopleList.get(i).name));
+            }
         }
-*/
 
+        //-----------------------------------------------------------------
+
+        for (int i = 0; i < peopleList.size(); i++) {
+
+            //System.out.println(transactionList.get(i).from.name + " gave " + transactionList.get(i).amount + " to " + transactionList.get(i).to.name);
+            System.out.println(peopleList.get(i).name);
+        }
+
+        System.out.println(peopleList.size());
         //------------------------------------------------------------------
 
 /*
