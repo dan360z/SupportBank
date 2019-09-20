@@ -5,20 +5,24 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String args[]) throws IOException {
 
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         List<String> file = Files.readAllLines(Paths.get("Transactions2014.csv"), Charset.forName("windows-1252"));
 
 
-        List<Staff.Person> csvPeopleList = new ArrayList<>();
+        List<Person> csvPeopleList = new ArrayList<>();
 
-        ArrayList<Staff.Person> peopleList = new ArrayList<>();
+        ArrayList<Person> peopleList = new ArrayList<>();
 
-        List<Transactions.Transaction> transactionList = new ArrayList<>();
+        List<Transaction> transactionList = new ArrayList<>();
 
 
         int count = 0;
@@ -30,15 +34,16 @@ public class Main {
                 String[] lineItems = line.split(",");
 
                 //--CSV People List-----------------------------------
-                csvPeopleList.add(new Staff.Person(lineItems[2]));
+                csvPeopleList.add(new Person(lineItems[2]));
 
                 //--Transactions--------------------------------
+                LocalDate date = LocalDate.parse(lineItems[0], dateTimeFormatter);
                 String desc = lineItems[3];
-                Staff.Person to = new Staff.Person(lineItems[2]);
-                Staff.Person from  = new Staff.Person(lineItems[1]);
+                String to = (lineItems[2]);
+                String from  = (lineItems[1]);
                 BigDecimal amount = new BigDecimal(lineItems[4]);
 
-                transactionList.add(new Transactions.Transaction(desc, to, from, amount));
+                transactionList.add(new Transaction(date, desc, to, from, amount));
 
             }
 
@@ -46,41 +51,54 @@ public class Main {
 
         }
 
-        //--Builds People List------------------------------------------------------
+        //----------------------------------------------------------------
 
-        for (int i = 0; i < csvPeopleList.size(); i++) {
-
-            boolean Duplicates = false;
-
-            for (int x = i + 1; x < csvPeopleList.size(); x++) {
-
-                if (csvPeopleList.get(x).name.equals(csvPeopleList.get(i).name)) {
-                    Duplicates = true;
-                }
-            }
-
-            if (!Duplicates) {
-                peopleList.add(new Staff.Person(csvPeopleList.get(i).name));
-            }
-        }
-
-        //peopleList = removeDuplicates();
+        removeDuplicates(csvPeopleList, peopleList);
 
         //-----------------------------------------------------------------
 
+        System.out.println("\nStatements:\n");
+
         for (int i = 0; i < transactionList.size(); i ++) {
 
-            System.out.println(transactionList.get(i).narrative);
-            System.out.println(transactionList.get(i).to.name);
-            System.out.println(transactionList.get(i).from.name);
-            System.out.println(transactionList.get(i).amount);
+            BigDecimal amount = transactionList.get(i).amount;
+            BigDecimal payersBalance = getPerson(transactionList.get(i).from, peopleList).balance;
+            BigDecimal receiversBalance = getPerson(transactionList.get(i).to, peopleList).balance;
 
+
+            BigDecimal payersUpdatedBalance = payersBalance.subtract(amount);
+            BigDecimal receiversUpdatedBalance = receiversBalance.add(amount);
+
+            getPerson(transactionList.get(i).from, peopleList).setBalance(payersUpdatedBalance);
+            getPerson(transactionList.get(i).to, peopleList).setBalance(receiversUpdatedBalance);
+
+            System.out.println(getPerson(transactionList.get(i).from, peopleList).name + " paid " + "$" + amount + " to "
+                                + getPerson(transactionList.get(i).to, peopleList).name + " for " + transactionList.get(i).narrative
+                                + " on " + transactionList.get(i).date + " and now has " + payersUpdatedBalance);
         }
 
+        System.out.println("\nEnd Balance:\n");
+
+        for (int i = 0; i < peopleList.size(); i ++) {
+
+            System.out.println(peopleList.get(i).name + " $" + peopleList.get(i).balance);
+
+        }
     }
-    /*
-    removeDuplicates(popList, newList) {
-        ArrayList<Person> people = new ArrayList<Person>();
+
+
+    private static Person getPerson(String name, List<Person> peopleList) {
+
+        for (int i = 0; i < peopleList.size(); i ++) {
+            if (name.equals(peopleList.get(i).name)) {
+                return peopleList.get(i);
+            }
+        }
+        return null;
+    }
+
+
+    private static void removeDuplicates(List<Person>csvPeopleList, List<Person>peopleList) {
 
         for (int i = 0; i < csvPeopleList.size(); i++) {
 
@@ -97,7 +115,6 @@ public class Main {
                 peopleList.add(new Person(csvPeopleList.get(i).name));
             }
         }
+    }
 
-        return people;
-    }*/
 }

@@ -3,25 +3,19 @@ package training.supportbank;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class Transactions {
+class Transaction {
+    LocalDate date;
+    String narrative;
+    String to;
+    String from;
+    BigDecimal amount;
 
-    static class Transaction {
-        LocalDate date;
-        String narrative;
-        Staff.Person to;
-        Staff.Person from;
-        BigDecimal amount;
-
-        Transaction(String n, Staff.Person t, Staff.Person f, BigDecimal a) {
-            this.narrative = n;
-            this.to = t;
-            this.from = f;
-            this.amount = a;
-        }
-
-        void removeAllMoney() {
-            amount = new BigDecimal(0);
-        }
+    Transaction(LocalDate d, String n, String t, String f, BigDecimal a) {
+        this.date = d;
+        this.narrative = n;
+        this.to = t;
+        this.from = f;
+        this.amount = a;
     }
 
 }
