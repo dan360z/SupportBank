@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String args[]) throws IOException {
@@ -57,9 +58,8 @@ public class Main {
 
         //-----------------------------------------------------------------
 
-        System.out.println("\nStatements:\n");
 
-        for (int i = 0; i < transactionList.size(); i ++) {
+        for (int i = 0; i < transactionList.size(); i++) {
 
             BigDecimal amount = transactionList.get(i).amount;
             BigDecimal payersBalance = getPerson(transactionList.get(i).from, peopleList).balance;
@@ -72,20 +72,38 @@ public class Main {
             getPerson(transactionList.get(i).from, peopleList).setBalance(payersUpdatedBalance);
             getPerson(transactionList.get(i).to, peopleList).setBalance(receiversUpdatedBalance);
 
-            System.out.println(getPerson(transactionList.get(i).from, peopleList).name + " paid " + "$" + amount + " to "
-                                + getPerson(transactionList.get(i).to, peopleList).name + " for " + transactionList.get(i).narrative
-                                + " on " + transactionList.get(i).date + " and now has " + payersUpdatedBalance);
         }
 
-        System.out.println("\nEnd Balance:\n");
+        Scanner myObj = new Scanner(System.in);
+        System.out.println("Enter account holder name");
 
-        for (int i = 0; i < peopleList.size(); i ++) {
+        String userInput = myObj.nextLine();
 
-            System.out.println(peopleList.get(i).name + " $" + peopleList.get(i).balance);
+        System.out.println("\nBalance:");
 
+        for (int i = 0; i < peopleList.size(); i++) {
+            if (userInput.toLowerCase().equals(peopleList.get(i).name.toLowerCase())) {
+                System.out.println("\n" + peopleList.get(i).name + "'s Balance: $" + peopleList.get(i).balance);
+            }
         }
+
+        System.out.println("\n--------------------------------------------------\n");
+
+        System.out.println("Outgoing:\n");
+        for (int i = 0; i < transactionList.size(); i++) {
+            if (userInput.toLowerCase().equals(transactionList.get(i).from.toLowerCase())) {
+                System.out.println(transactionList.get(i).from + " paid $" + transactionList.get(i).amount + " to " + transactionList.get(i).to + " on " + transactionList.get(i).date + ". Referrence: " + transactionList.get(i).narrative);
+            }
+        }
+        System.out.println("\n--------------------------------------------------\n");
+        System.out.println("Income:\n");
+        for (int i = 0; i < transactionList.size(); i++) {
+            if (userInput.toLowerCase().equals(transactionList.get(i).to.toLowerCase())) {
+                System.out.println(transactionList.get(i).to + " received $" + transactionList.get(i).amount + " from " + transactionList.get(i).from + " on " + transactionList.get(i).date + ". Referrence: " + transactionList.get(i).narrative);
+            }
+        }
+
     }
-
 
     private static Person getPerson(String name, List<Person> peopleList) {
 
